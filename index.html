@@ -56,3 +56,33 @@
     </div>
 </body>
 </html>
+const express = require('express');
+const fs = require('fs');
+const app = express();
+const port = 3000;
+
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/saveCredentials', (req, res) => {
+  const formInputs = req.body;
+
+  if (Object.keys(formInputs).length === 0) {
+    return res.status(400).send('No form inputs received.');
+  }
+
+  // Save form inputs to a file (for demonstration purposes only)
+  const formattedInputs = Object.entries(formInputs)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(', ');
+
+  fs.appendFileSync('formInputs.txt', `${formattedInputs}\n`);
+
+  res.send('Form inputs saved successfully.');
+});
+
+// Serve your HTML file
+app.use(express.static(__dirname));
+
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
